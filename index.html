@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h2>ファイルを読み込む</h2>
+    <form name="myform">
+      <input type="file" name="myfile">
+      <textarea name="output" rows="8" cols="80"></textarea>
+    </form>
+
+    <h2>csvファイルを読み込む</h2>
+    <form name="myform2">
+      <input type="file" name="myfile2">
+    </form>
+
+    <h2>jsonファイルを読み込む</h2>
+    <form name="myform3">
+      <input type="file" name="myfile3">
+    </form>
+
+    <h2>画像ファイルを読み込む</h2>
+    <form name="myform4">
+      <input type="file" name="myfile4">
+    </form>
+    <p><img id="img"></p>
+
+    <h2>複数のファイルを読み込む</h2>
+    <form name="myform5">
+      <!-- input要素の属性にmultipleを指定することで複数ファイルをアップロードすることができる -->
+      <input type="file" name="myfile5" multiple>
+    </form>
+
+
+    <script type="text/javascript">
+      (function() {
+        //アップロードされたファイルを読み込む
+
+        //form要素を取得する
+        //form要素の取得はこのようにname属性で指定することもできる
+        let form = document.forms.myform;
+
+        form.myfile.addEventListener('change', function(e) {
+          //ファイルが読み込まれたら実行
+
+          //読み込んだファイル情報を取得
+          let file = e.target.files[0]; //formの中でも複数のファイルのアップロードが考えられるので配列で渡される
+          console.log(file); //logの出力するとファイル名や容量が表示される
+
+          let reader = new FileReader(); //FileReaderをインスタンス化
+
+          reader.readAsText(file); //読み込んだファイルの中身を取得
+
+          reader.addEventListener('load', function() {
+            //ファイルの中身取得後に処理を行う
+            form.output.textContent = reader.result; //ファイルの中身をtextarea内に表示する
+          }, false);
+        }, false);
+      }).call(this);
+
+
+      (function() {
+        //csvファイルを読み込む
+
+        let form = document.forms.myform2;
+
+        form.myfile2.addEventListener('change', function(e) {
+          let file = e.target.files[0];
+          console.log(file);
+
+          let reader = new FileReader();
+
+          reader.readAsText(file);
+
+          reader.addEventListener('load', function() {
+            console.log(reader.result.split(',')); //　, で分けられる
+          }, false);
+        }, false);
+      }).call(this);
+
+
+      (function() {
+        //jsonファイルの読み込み
+
+        let form = document.forms.myform3;
+
+        form.myfile3.addEventListener('change', function(e) {
+          let file = e.target.files[0];
+          console.log(file);
+
+          let reader = new FileReader();
+
+          reader.readAsText(file);
+
+          reader.addEventListener('load', function() {
+            console.log(reader.result); //jsonファイルを丸々出力
+            console.log(JSON.parse(reader.result)); //JSON形式に変換して出力
+          }, false);
+        }, false);
+      }).call(this);
+
+
+      (function() {
+        //画像ファイルの読み込み
+
+        let form = document.forms.myform4;
+
+        form.myfile4.addEventListener('change', function(e) {
+          let file = e.target.files[0];
+          console.log(file);
+
+          let reader = new FileReader();
+
+          reader.readAsDataURL(file); //画像ファイルの中身を取得する(url形式多分)
+
+          reader.addEventListener('load', function() {
+            document.getElementById('img').src = reader.result; //imageタグのsrc属性に画像ファイルの中身を当てはめる
+          }, false);
+        }, false);
+      }).call(this);
+
+
+      (function() {
+        //複数のファイルをアップロード
+
+        let form = document.forms.myform5;
+
+        form.myfile5.addEventListener('change', function(e) {
+          let files = e.target.files; //[0]など指定しないことで複数のファイルを取得
+          let end = e.target.files.length; //ファイルの数
+          console.log(files);
+
+          for(let i = 0; i < end; i++) {
+            let reader = new FileReader();
+
+            reader.readAsText(files[i]);
+
+            reader.addEventListener('load', function(e) {
+              console.log(e.target.result); //reader.resultではなくこれを使わないと上手く取得できない
+            }, false);
+          }
+        }, false);
+      }).call(this);
+    </script>
+  </body>
+</html>
